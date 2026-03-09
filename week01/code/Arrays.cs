@@ -12,9 +12,21 @@ public static class Arrays
         // Remember: Using comments in your program, write down your process for solving this problem
         // step by step before you write the code. The plan should be clear enough that it could
         // be implemented by another person.
+        //COMMENTS:
+        //Multiples of (2,6) -> {2, 4, 6, 8, 10, 12}
+        //1. Create an array of doubles with the size of length
+        //2. Loop through the array and assign each element to be number * (index + 1)
+        //3. Return the array
 
-        return []; // replace this return statement with your own
+
+        double[] result = new double[length];
+        for (int i = 0; i < length; i++)
+        {
+            result[i] = number * (i + 1);
+        }
+        return result;
     }
+    // TODO Problem 1 End- 
 
     /// <summary>
     /// Rotate the 'data' to the right by the 'amount'.  For example, if the data is 
@@ -29,5 +41,22 @@ public static class Arrays
         // Remember: Using comments in your program, write down your process for solving this problem
         // step by step before you write the code. The plan should be clear enough that it could
         // be implemented by another person.
+        //COMMENTS:
+        //Rotate List Right (List<int>{1, 2, 3, 4, 5, 6, 7, 8, 9}, 3) -> List<int>{7, 8, 9, 1, 2, 3, 4, 5, 6}
+        //1. Create a new list to hold the rotated values
+        //2. Loop through the original list starting from the index of data.Count - amount and add each element to the new list until the end of the original list
+        //3. Loop through the original list starting from the index of 0 and add each element to the new list until the index of data.Count - amount
+        //4. Clear the original list and add the elements from the new list back to the original list   
+    
+        List<int> rotated = new List<int>();
+        for (int i = data.Count - amount; i < data.Count; i++)        {
+            rotated.Add(data[i]);
+        }       
+        for (int i = 0; i < data.Count - amount; i++)        {
+            rotated.Add(data[i]);
+        }
+        data.Clear();
+        data.AddRange(rotated);
     }
+    // TODO Problem 2 End
 }
