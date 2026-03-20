@@ -12,7 +12,9 @@ public class PriorityQueueTests
     // Expected Result: Items with the higherst priority should be dequeued first.
     //  If two items have the same priority, they should be dequeued in the order they were enqueued.
     // First, Third, Fourth, Second
-    // Defect(s) Found: 
+    // Defect(s) Found: The highest pririty items were not being dequeued first.
+    //  I fixed this by changing the Dequeue method to first find the item with the highest priority in the queue, 
+    // and then remove and return that item. 
     public void TestPriorityQueue_1()
     {
         var priorityQueue = new PriorityQueue();
@@ -30,7 +32,8 @@ public class PriorityQueueTests
     [TestMethod]
     // Scenario: If the queue is empty and Dequeue is called, an exception should be thrown.
     // Expected Result: An InvalidOperationException should be thrown.
-    // Defect(s) Found: 
+    // Defect(s) Found: The empty queue did not give the correct error exception and it didn t give the correct error message. 
+    // I fixed this by adding a check at the beginning of the Dequeue method.
        public void TestPriorityQueue_2()
     {
         var priorityQueue = new PriorityQueue();
