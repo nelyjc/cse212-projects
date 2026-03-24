@@ -1,4 +1,6 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
+
 
 public static class SetsAndMaps
 {
@@ -21,9 +23,28 @@ public static class SetsAndMaps
     /// <param name="words">An array of 2-character words (lowercase, no duplicates)</param>
     public static string[] FindPairs(string[] words)
     {
-        // TODO Problem 1 - ADD YOUR CODE HERE
-        return [];
+        var set = new HashSet<string>(words);
+        var pairs = new List<string>();
+
+        foreach (var word in words)
+        {
+            string reverse = $"{word[1]}{word[0]}";
+
+            // Skip cases like "aa"
+            if (word == reverse)
+                continue;
+
+            // If reverse exists, add pair only once
+            if (set.Contains(reverse) && string.Compare(word, reverse) < 0)
+            {
+                pairs.Add($"{word} & {reverse}");
+            }
+        }
+
+        // Convert list to array and return
+        return pairs.ToArray();
     }
+
 
     /// <summary>
     /// Read a census file and summarize the degrees (education)
@@ -39,11 +60,22 @@ public static class SetsAndMaps
     public static Dictionary<string, int> SummarizeDegrees(string filename)
     {
         var degrees = new Dictionary<string, int>();
+
         foreach (var line in File.ReadLines(filename))
         {
             var fields = line.Split(",");
             // TODO Problem 2 - ADD YOUR CODE HERE
+         string degree = fields[3].Trim();
+
+        if (degrees.ContainsKey(degree))
+        {
+            degrees[degree]++;
         }
+        else
+        {
+            degrees[degree] = 1;
+        }
+}
 
         return degrees;
     }
@@ -67,8 +99,37 @@ public static class SetsAndMaps
     public static bool IsAnagram(string word1, string word2)
     {
         // TODO Problem 3 - ADD YOUR CODE HERE
+
+    word1 = word1.Replace(" ", "").ToLower();
+    word2 = word2.Replace(" ", "").ToLower();
+
+    if (word1.Length != word2.Length)
         return false;
+
+    var counts = new Dictionary<char, int>();
+
+    foreach (char c in word1)
+    {
+        if (counts.ContainsKey(c))
+            counts[c]++;
+        else
+            counts[c] = 1;
     }
+
+    // Subtract letters using second word
+    foreach (char c in word2)
+    {
+        if (!counts.ContainsKey(c))
+            return false;
+
+        counts[c]--;
+
+        if (counts[c] < 0)
+            return false;
+    }
+
+         return true;
+    }   
 
     /// <summary>
     /// This function will read JSON (Javascript Object Notation) data from the 
@@ -88,19 +149,54 @@ public static class SetsAndMaps
     {
         const string uri = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson";
         using var client = new HttpClient();
-        using var getRequestMessage = new HttpRequestMessage(HttpMethod.Get, uri);
-        using var jsonStream = client.Send(getRequestMessage).Content.ReadAsStream();
-        using var reader = new StreamReader(jsonStream);
-        var json = reader.ReadToEnd();
+        string json = client.GetStringAsync(uri).Result;
+
         var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 
         var featureCollection = JsonSerializer.Deserialize<FeatureCollection>(json, options);
 
+
+        if (featureCollection == null || featureCollection.Features == null)
+                return Array.Empty<string>();
+
+            var results = new List<string>();
+
+            foreach (var feature in featureCollection.Features)
+            {
+                if (feature?.Properties != null)
+                {
+                    string place = feature.Properties.Place ?? "";
+                    decimal? mag = feature.Properties.Mag;
+
+                    results.Add($"{place} - Mag {mag}");
+                }
+            }
+
+            return results.ToArray();
+        }
         // TODO Problem 5:
         // 1. Add code in FeatureCollection.cs to describe the JSON using classes and properties 
         // on those classes so that the call to Deserialize above works properly.
         // 2. Add code below to create a string out each place a earthquake has happened today and its magitude.
         // 3. Return an array of these string descriptions.
-        return [];
-    }
+        public class FeatureCollection
+        {
+            [JsonPropertyName("features")]
+            public List<Feature> Features { get; set; } = new();
+        }
+
+        public class Feature
+        {
+            [JsonPropertyName("properties")]
+            public FeatureProperties Properties { get; set; } = new();
+        }
+
+        public class FeatureProperties
+        {
+            [JsonPropertyName("place")]
+            public string Place { get; set; } = "";
+
+            [JsonPropertyName("mag")]
+            public decimal? Mag { get; set; }
+        }
 }
