@@ -170,6 +170,9 @@ public static class Recursion
     {
         // If this is the first time running the function, then we need
         // to initialize the currPath list.
+         // TODO Start Problem 5
+    
+        // ADD CODE HERE
         if (currPath == null) 
         {
             currPath = new List<ValueTuple<int, int>>();
@@ -195,9 +198,7 @@ public static class Recursion
         SolveMaze(results, maze, x, y - 1, currPath); // Move up
         currPath.RemoveAt(currPath.Count - 1); // Backtrack
 
-        // TODO Start Problem 5
-
-        // ADD CODE HERE
+       
 
 
 
