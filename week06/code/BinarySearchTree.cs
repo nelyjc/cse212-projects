@@ -68,7 +68,7 @@ public class BinarySearchTree : IEnumerable<int>
     /// <summary>
     /// Iterate backward through the BST.
     /// </summary>
-    public IEnumerable Reverse()
+    public IEnumerable<int> Reversed()
     {
         var numbers = new List<int>();
         TraverseBackward(_root, numbers);
@@ -79,9 +79,14 @@ public class BinarySearchTree : IEnumerable<int>
     }
 
     private void TraverseBackward(Node? node, List<int> values)
+{
+    if (node is not null)
     {
-        // TODO Problem 3
+        TraverseBackward(node.Right, values);
+        values.Add(node.Data);
+        TraverseBackward(node.Left, values);
     }
+}
 
     /// <summary>
     /// Get the height of the tree
@@ -90,17 +95,21 @@ public class BinarySearchTree : IEnumerable<int>
     {
         if (_root is null)
             return 0;
+            
         return _root.GetHeight();
     }
 
     public override string ToString()
     {
         return "<Bst>{" + string.Join(", ", this) + "}";
-    }
+    }   
 }
+     /// <summary>
 
-public static class IntArrayExtensionMethods {
-    public static string AsString(this IEnumerable array) {
+public static class IntArrayExtensionMethods
+{
+    public static string AsString(this IEnumerable array)
+    {
         return "<IEnumerable>{" + string.Join(", ", array.Cast<int>()) + "}";
     }
 }
